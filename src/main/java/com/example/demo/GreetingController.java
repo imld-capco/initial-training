@@ -17,9 +17,6 @@ public class GreetingController {
     @GetMapping("/greetings")
     public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
         LOGGER.info("Greetings request");
-        System.out.println(org.apache.logging.log4j.Logger.class.getResource("/org/apache/logging/log4j/Logger.class"));
-        System.out.println(org.apache.logging.log4j.Logger.class.getResource("/org/apache/logging/log4j/FileAppender.class"));
-        System.out.println(org.apache.logging.log4j.Logger.class.getResource("/log4j2-spring.xml"));
         return new Greeting(counter.incrementAndGet(), String.format(template, name));
     }
 }
