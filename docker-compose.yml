@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  elk:
+    image: sebp/elk
+    container_name: dcelk
+    ports: 
+      - 5601:5601 
+      - 9200:9200 
+      - 5044:5044
+    networks:
+      - localnetwork
+  filebeats:
+    build: ./filebeat
+    container_name: filebeats
+    volumes:
+      - appvol:/logs
+    networks:
+      - localnetwork
+    depends_on:
+      - elk
+  mongo:
+    image: mongo
+    container_name: dcmongo
+    ports: 
+     - 27017:27017
+    networks:
+      - localnetwork
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    networks:
+      - localnetwork
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    networks:
+      - localnetwork
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+  app:
+    build: ./demomvn
+    container_name: spring_app
+    volumes:
+      - appvol:/logs
+    networks:
+      - localnetwork
+    ports:
+      - 8090:8090
+      - 8080:8080
+    depends_on:
+      - kafka
+      - zookeeper
+      - mongo
+networks:
+  localnetwork:
+    driver: bridge
+volumes:
+  appvol:

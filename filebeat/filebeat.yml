@@ -2,14 +2,14 @@ output:
   logstash:
     enabled: true
     hosts:
-      - localhost:5044
+      - elk:5044
     timeout: 15
     ssl:
       certificate_authorities:
-        - /Users/imld/Desktop/filebeat/filebeat-7.10.2-darwin-x86_64/certificate.crt
+        - /certificate.crt
 filebeat:
   inputs:
     -
       paths:
-        - /Users/imld/Desktop/log/app.log
+        - /logs/app.log
       document_type: syslog
